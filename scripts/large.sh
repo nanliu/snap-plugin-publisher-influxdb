@@ -1,4 +1,5 @@
 #!/bin/bash
+# File managed by pluginsync
 
 set -e
 set -u
@@ -6,10 +7,10 @@ set -o pipefail
 
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __proj_dir="$(dirname "$__dir")"
-__proj_name="$(basename $__proj_dir)"
+__proj_name="$(basename "$__proj_dir")"
 
+# shellcheck source=scripts/common.sh
 . "${__dir}/common.sh"
-
 
 _verify_docker() {
   type -p docker > /dev/null 2>&1 || _error "docker needs to be installed"

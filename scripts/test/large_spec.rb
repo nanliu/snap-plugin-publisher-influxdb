@@ -4,6 +4,8 @@ require_relative './spec_helper'
 require 'specinfra/backend/docker_compose'
 
 compose_yml = File.expand_path(File.join(__FILE__, "../docker-compose.yml"))
+raise(Exception, "Missing docker-compose file: #{compose_yml}") unless File.exists? compose_yml
+
 set :docker_compose_container, :snap
 
 describe docker_compose(compose_yml) do
@@ -18,7 +20,7 @@ describe docker_compose(compose_yml) do
         }
       end
 
-      if os[:family] != 'ubuntu'
+      if os[:family] == 'alpine'
         describe port(8181) do
           it { should be_listening }
         end
@@ -63,6 +65,8 @@ describe docker_compose(compose_yml) do
               id = subject.stdout.split("\n").find{|l|l=~/^ID:/}
               task_id = $1 if id.match(/^ID: (.*)$/)
               expect(task_id).to_not be_nil
+              # NOTE we need a short pause before checking task state in case it fails:
+              sleep 3
             }
           end
 
